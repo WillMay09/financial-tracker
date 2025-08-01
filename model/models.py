@@ -1,106 +1,43 @@
-class User:
-    #constructor
-    def __init__(self, id,username, email, password):
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKEy
+from sqlalchemy.orm import ,relationshipdeclarative_base
+from datetime import date
 
-        self.__id = id
-        self.__username = username
-        self.__email = email
-        self.__password = password
+#instance of base class
+Base = declarative_base()
 
-    @property
-    def username(self):
-        return self.__username
-    
-    @username.setter
-    def username(self, username):
-        self.__username = username
+class User(Base):
+    #class will map to a database table
+    __tablename__ = 'users'
 
-    @property
-    def email(self):
-        return self.__email
-    
-    @email.setter
-    def email(self, email):
-        self.__email = email
-    
-    @property
-    def password(self):
-        return self.__password
-    
-    @password.setter
-    def password(self, password):
-        self.__password = password
-
+    id = Column(Integer, primary_key=True)
+    username = Column(String(100), unique=True, nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
+    password_hash = Column(String(128), nullable=False)
 class Category:
 
-    def __init__(self,id, name, user_id):
+    __table__='categories'
 
-        self.__id = id
-        self.__name = name
-        self.__user_id = user_id
-
-    @property
-    def id(self):
-        
-        return self.__id
-    @id.setter
-    def id(self, id):
-        self.__id = id
-    @property
-    def name(self):
-        
-        return self.__name
-    @name.setter
-    def name(self, name):
-        self.__name = name
-    
-    @property
-    def user_id(self):
-        
-        return self.__user_id
-
-    @user_id.setter
-    def user_id(self, user_id):
-        self.__user_id = user_id
+        id = Column(Integer, primary_key=True)
+        name = Column(String(100) unique=True, nullable=False)
+        user_id = Column(Integer, ForeignKey('users.id'))
+        #Relationships
+        user = relationship("User", back_populates="categories")
+        expenses = relationship("Expense", back_populates="category", cascade="all, delete")
 
 class Expense:
 
-    def __init__(self, id, amount, description, date):
-        self.__id = id
-        self.__amount = amount
-        self.__description = description
-        self.__date = date
-    
-    @property
-    def id(self):
-        
-        return self.__id
-    @id.setter
-    def id(self, id):
-        self.__id = id
-    @property
-    def amount(self):
-        
-        return self.__amount
-    @amount.setter
-    def amount(self, amount):
-        self.__amount = amount
-    
-    @property
-    def description(self):
-        
-        return self.__description
+    __tables__='expenses'
+        id = Column(Integer, primary_key=True)
+        amount = Column(Integer, nullable=False)
+        description = Column(String(300), nullable=True)
+        date = Column(date, nullable=False)
 
-    @description.setter
-    def description(self, description):
-        self.__description = description
+        user_id = Column(Integer, ForeignKey('users.id'))
+        category = Column(String(100), ForeignKey('categories.id'))
 
-    @property
-    def date(self):
-        return self.__date
-    @date.setter
-    def date(self, date)
-        self.__date = date
+        user = relationship("User", back_populates="expenses")
+        category = relationship("Category", back_populates="expenses")
+   
 
 
     
