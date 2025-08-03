@@ -16,6 +16,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(128), nullable=False)
 
-    
+    expenses = relationship("Expense", back_populates="user", cascade="all, delete")
+    categories= relationship("Category", back_populates="user", cascade="all, delete")
 
     
